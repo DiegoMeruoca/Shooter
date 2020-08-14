@@ -1,0 +1,525 @@
+<html>
+<head>
+<title>The Shooter - Processing.js</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<style type="text/css">
+	.borda {
+	  border-width: medium;
+	  border-style: solid;
+	  border-color: #ff0000;
+	  }
+	body{
+		background: #202020;
+	}
+</style>
+<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="minhajanela">
+	Pfont f;
+	int pontos = 0;
+	int vida=5;
+	int px1 = 100;
+	int py1 = 500;
+	int px2 = 900;
+	int py2 = 500;
+	int px3 = 30;
+	int py3 = 500;
+	int expX1 = 0;
+	int expY1 = 0;
+	int expX2 = 0;
+	int expY2 = 0;
+	int expX3 = 0;
+	int expY3 = 0;
+	int record = 0;
+	int state = 0;//0-Abertura 1-Game 2-encerra
+	int p = 0;
+	int balaPente1=13;
+	int balaReserva1=12;
+	int balaReserva1b=12;
+	int balaPente2=8;
+	int balaReserva2=8;
+	int balaReserva2b=8;
+	int balaPente3=50;
+	int balaReserva3=50;
+	int balaReserva3b=50;
+	int dano=1;
+	int arma=1;
+	float velocidade = 25;
+	boolean explodiu1 = false;
+	boolean explodiu2 = false;
+	boolean explodiu3 = false;
+	boolean overButton1 = false;
+	boolean overButton2 = false;
+	boolean overButton3 = false;
+	int numFrames = 8;  
+	int currentFrameExp1 = 0;
+	int currentFrameExp2 = 0;
+	int currentFrameExp3 = 0;
+	PImage bg;
+	Pimage mira;
+	Pimage projetil;
+	PImage abertura;
+	PImage encerra;
+	Pimage metal;
+	PImage arma1;
+	PImage arma2;
+	PImage arma3;
+	PImage[] hud = new PImage[4];;
+	PImage[] imagens = new PImage[numFrames];
+	
+	void setup() {
+		size(1000, 500);
+		strokeWeight(20.0);
+		stroke(255,0,0);
+		frameRate(velocidade);
+		mira = loadImage("imagens/mira.png");
+		projetil = loadImage("imagens/projetil.png");
+		alvo = loadImage("imagens/alvo.png");
+		noCursor();
+		f = createFont("Arial",30,true);
+		imagens[0]  = loadImage("imagens/explo1.png");	
+		imagens[1]  = loadImage("imagens/explo2.png");
+		imagens[2]  = loadImage("imagens/explo3.png");
+		imagens[3]  = loadImage("imagens/explo4.png"); 
+		imagens[4]  = loadImage("imagens/explo5.png"); 
+		imagens[5]  = loadImage("imagens/explo6.png");
+		imagens[6]  = loadImage("imagens/explo7.png");
+		imagens[7]  = loadImage("imagens/explo8.png");
+		bg = loadImage("imagens/fundo.jpg");
+		abertura = loadImage("imagens/abertura.png");
+		encerra = loadImage("imagens/gameover.jpg");
+		metal = loadImage("imagens/metal.jpg");
+		arma1 = loadImage("imagens/pistola.png");
+		arma2 = loadImage("imagens/escopeta.png");
+		arma3 = loadImage("imagens/rambo.png");
+		hud[0] = loadImage("imagens/hud.png");
+		hud[1] = loadImage("imagens/hud1.png");
+		hud[2] = loadImage("imagens/hud2.png");
+		hud[3] = loadImage("imagens/hud3.png");
+		hud[4] = loadImage("imagens/hud4.png");
+	}
+	void draw() {
+		if(state==0){
+			drawAbertura();
+		}else if(state==2){
+			drawGameOver();
+		}else{
+			background(0);
+			image(bg,0,0);
+			frameRate(velocidade);
+			if(vida==0){
+				state=2;
+				if(pontos>record){
+					record=pontos;
+				}
+				p=pontos;
+				pontos=0;
+				vida=5;
+				py1=400;
+				py2=500;
+				py3=500;
+				velocidade=25;
+				arma=1;
+				balaPente1=13;
+				balaReserva1=12;
+				balaReserva1b=12;
+				balaPente2=8;
+				balaReserva2=8;
+				balaReserva2b=8;
+				balaPente3=50;
+				balaReserva3=50;
+				balaReserva3b=50;
+				dano=1;
+			}
+			py1 = py1 - 4;
+			if(py1<=-100){
+				py1=500;
+				px1=random(150,850);
+				vida-=1;
+			}
+			if(py2<=-70){
+				py2=500;
+				px2=random(200,800);
+				vida-=1;
+			}
+			if(py3<=-50){
+				py3=500;
+				px3=random(300,700);
+				vida-=1;
+			}                        
+			if(pontos>=50){
+				velocidade=30;
+			}
+			if(pontos>=100){
+				velocidade=35;
+			}
+			if(pontos>=200){
+				velocidade=40;
+			}
+			if(pontos>=300){
+				velocidade=45;
+			}
+			if(pontos>=400){
+				velocidade=50;
+			}
+			if(pontos>=500){
+				velocidade=55;
+			}
+			if(pontos>=600){
+				velocidade=60;
+			}
+			if(pontos>=700){
+				velocidade=65;
+			}
+			if(pontos>=800){
+				velocidade=70;
+			}
+			if(pontos>=900){
+				velocidade=75;
+			}
+			image(alvo, px1, py1, 100,100);
+			if(pontos>=50){
+				image(alvo, px2, py2, 70,70);
+				py2 = py2 - 4;
+			}
+			if(pontos>=100){
+				image(alvo, px3, py3, 50,50);
+				py3 = py3 - 4;
+			}
+			if(explodiu1==true){
+				currentFrameExp1 = (currentFrameExp1+1);
+				image(imagens[currentFrameExp1], expX1, expY1, 100, 100);
+				if(currentFrameExp1==7){
+					explodiu1=false;
+				}	
+			}
+			if(explodiu2==true){
+				currentFrameExp2 = (currentFrameExp2+1);
+				image(imagens[currentFrameExp2], expX2, expY2, 70, 70);
+				if(currentFrameExp2==7){
+					explodiu2=false;
+				}	
+			}
+			if(explodiu3==true){
+				currentFrameExp3 = (currentFrameExp3+1);
+				image(imagens[currentFrameExp3], expX3, expY3, 50, 50);
+				if(currentFrameExp3==7){
+					explodiu3=false;
+				}	
+			}
+			image(metal,0,410);
+			textFont(f,30);
+			if(arma==1){
+				image(arma1, mouseX, 380,130,130);
+				fill(255,255,255);//sobra branca na letra 
+				text(balaPente1+"/"+(balaReserva1+balaReserva1b),951,391);//sobra branca na letra 
+				fill(255,0,0); 				
+				text(balaPente1+"/"+(balaReserva1+balaReserva1b),950,390);
+			}
+			if(arma==2){
+				image(arma2, mouseX, 350,300,150);
+				fill(255,255,255);//sobra branca na letra 
+				text(balaPente2+"/"+(balaReserva2+balaReserva2b),951,391);//sobra branca na letra 	
+				fill(255,0,0); 
+				text(balaPente2+"/"+(balaReserva2+balaReserva2b),950,390);
+			}
+			if(arma==3){
+				image(arma3, mouseX, 350,300,150);
+				fill(255,255,255);//sobra branca na letra 
+				text(balaPente3+"/"+(balaReserva3+balaReserva3b),951,391);//sobra branca na letra 	
+				fill(255,0,0); 
+				text(balaPente3+"/"+(balaReserva3+balaReserva3b),950,390);
+			}
+			if(arma==1){
+				image(hud[1],0,0,300,50);
+			}
+			if(arma==2){
+				image(hud[2],0,0,300,50);
+			}
+			if(arma==3){
+				image(hud[3],0,0,300,50);
+			}
+			if(arma==1 && (balaReserva1+balaReserva1b)>0){
+				image(hud[4],0,0,300,50);
+			}
+			if(arma==2 && (balaReserva2+balaReserva2b)>0){
+				image(hud[4],0,0,300,50);
+			}
+			if(arma==3 && (balaReserva3+balaReserva3b)>0){
+				image(hud[4],0,0,300,50);
+			}
+			image(mira, mouseX, mouseY,50,50);
+			fill(255,255,255);//sobra branca na letra 
+			text("Pontuação: " +pontos ,501,31);//sobra branca na letra 
+			text("Vidas: " +vida ,701,31);//sobra branca na letra
+			text("Record: " +record ,886,31);//sobra branca na letra
+			fill(255,0,0); 
+			text("Pontuação: " +pontos ,500,30);
+			text("Vidas: " +vida ,700,30);
+			text("Record: " +record ,885,30);//sobra branca na letra
+			if (keyPressed) {
+					if (key == 'R' || key == 'r'){
+						recarregar();
+					}
+					if (key == 'Q' || key == 'q'){
+						arma=1;
+					}
+					if (key == 'w' || key == 'w'){
+						arma=2;
+					}
+					if (key == 'E' || key == 'e'){
+						arma=3;
+					}
+				
+			}
+		}	
+			
+						
+	}
+	void recarregar(){
+		if(balaReserva1>0 && arma==1 && balaPente1<12){
+			balaReserva1=0;
+			balaPente1=12;
+		}else if(balaReserva1b>0 && arma==1 && balaPente1<12){
+			balaReserva1b=0;
+			balaPente1=12;
+		}
+		if(balaReserva2>0 && arma==2 && balaPente2<8){
+			balaReserva2=0;
+			balaPente2=8;
+		}else if(balaReserva2b>0 && arma==2 && balaPente2<8){
+			balaReserva2b=0;
+			balaPente2=8;
+		}
+		if(balaReserva3>0 && arma ==3 && balaPente3<50){
+			balaReserva3=0;
+			balaPente3=50;
+		}else if(balaReserva3b>0 && arma ==3 && balaPente3<50){
+			balaReserva3b=0;
+			balaPente3=50;
+		}
+	}
+	
+	void drawAbertura(){
+		image(abertura,0,0);
+		textAlign(CENTER);
+		fill(255,0,0);
+		textSize(28);
+		text("Clique na tela para começar...",500,150);
+		text("Como jogar:",500,270);
+		textSize(22);
+		text("Clique no alvo para pontuar...\nNão deixe ele passar direto ou perderá vidas...\n"+
+		"Você só tem 5 vidas e as balas não são infinitas, capriche na mira...\n"+
+		"Q - Pistola   W - Escopeta  E - Metralhadora  R - Recarregar munição\n"+
+		"Eu te desafio a bater o record de 600 pontos!!!",500,300);
+		image(projetil, mouseX, mouseY,30,40);
+	}
+	
+	void drawGameOver(){
+		image(encerra,0,0);
+		textAlign(CENTER);
+		fill(255,0,0);
+		textSize(28);
+		textSize(22);
+		text("Sua pontuação foi "+p+"!!!\nPressione uma tecla para tentar novamente...",500,250);
+		if (keyPressed) {
+			state=1;
+		}
+	}
+	
+	void mousePressed(){
+	if(balaPente1>0 && arma==1){
+		balaPente1-=1;
+	}
+	if(balaPente2>0 && arma==2){
+		balaPente2-=1;
+	}
+	if(balaPente3>0 && arma==3){
+		balaPente3-=1;
+	}
+	if (state==0){
+		state=1;
+	}
+	if(arma==1){
+		if(balaPente1==0){
+			dano=0;
+		}else{
+			dano=1;
+		}
+	}
+	if(arma==2){
+		if(balaPente2==0){
+			dano=0;
+		}else{
+			dano=1;
+		}
+	}
+	if(arma==3){
+		if(balaPente3==0){
+			dano=0;
+		}else{
+			dano=1;
+		}
+	}
+	if(dano==1){
+		if (overButton1 == true) {
+				pontos+=5;
+				expX1=px1;
+				expY1=py1;
+				currentFrameExp1=0;
+				explodiu1=true;
+				py1=450;
+				px1=random(50,900);
+				
+			}
+		if (overButton2 == true) {
+				pontos+=10;
+				expX2=px2;
+				expY2=py2;
+				currentFrameExp2=0;
+				explodiu2=true;
+				py2=450;
+				px2=random(100,900);
+			}
+		if (overButton3 == true) {
+				pontos+=20;
+				expX3=px3;
+				expY3=py3;
+				currentFrameExp3=0;
+				explodiu3=true;
+				py3=450;
+				px3=random(200,800);
+			}		
+		}
+	}	
+	
+	void mouseMoved() {//Se o mause for movido
+		checkButtons();//Execura o checkButtons
+	}
+	void mouseDragged() {//Se o mouse for arrastado
+		checkButtons();//Execurta o checkButtons
+	}
+	void checkButtons() {
+		if (mouseX > px1-50 && mouseX < px1+50 && mouseY > py1-50 && mouseY <py1+50) {
+			overButton1 = true;
+		} else {
+			overButton1 = false;
+		}
+		if (mouseX > px2-35 && mouseX < px2+35 && mouseY > py2-35 && mouseY <py2+35) {
+			overButton2 = true;
+		} else {
+			overButton2 = false;
+		}
+		if (mouseX > px3-40 && mouseX < px3+10 && mouseY > py3-40 && mouseY <py3+10) {
+			overButton3 = true;
+		} else {
+			overButton3 = false;
+		}
+}
+</script>
+<body>
+	<!--Barra de navegação-->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark pt-0 pb-0">
+		<!--Define o logo e seu texto-->
+		<a class="navbar-brand" href="http://diegomeruoca.github.io">
+			<img src="imagens/logo.png" height=60px class="d-inline-block align-center">
+			<!---<span style="color:#165FA4">Diego Meruoca</span>-->
+		</a>
+		
+		<!--Botão de menu sanduiche, aparece quando a tela é pequena-->
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar" 
+			aria-controls="myNavbar" aria-expanded="false" aria-label="Alterna navegação">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<!--Criação dos botões-->
+		<div class="collapse navbar-collapse" id="myNavbar">
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item active">
+					<a class="nav-link" href="http://diegomeruoca.github.io/Shooter">The shooter</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="http://diegomeruoca.github.io/SpaceDefender">Space Defender</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="http://diegomeruoca.github.io">Meu site</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<br>
+	<!-- canvas do jogo-->
+	<center>
+		<canvas id="minhajanela" class="mw-100"></canvas><br>
+	
+		<br>			
+		<!-- Botão para acionar modal -->
+		<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modalExemplo">
+			Dicas para detonar!!!
+		</button>
+		<br>
+	</center>
+	<!-- Modal -->
+	<div class="modal fade" id="modalExemplo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content bg-dark text-light">
+				<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Como jogar:</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				</div>
+				<div class="modal-body">
+					Clique no alvo para pontuar...
+					<br>Alvo grande - 5 Pontos
+					<br>Alvo médio - 10 Pontos
+					<br>Alvo pequeno - 20 Pontos
+					<br>Não deixe ele passar direto ou perderá vidas...
+					<br>Você só tem 5 vidas e as balas não são infinitas, capriche na mira...
+					<br>Q - Pistola   
+					<br>W - Escopeta 
+					<br>E - Metralhadora
+					<br>R - Recarregar munição 
+					<br>Dica: Espere acabar todas as balas do pente antes de recarregar para não disperdiçar munição...
+					<br>Eu te desafio a bater o record de 600 pontos!!!
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="Container text-light">
+		Jogo criado em JavaScript utilizando a biblioteca Processing, imagens obtidas através da Internet.
+		<br>Essa aplicação tem carater apenas acadêmico, sem nenhuma intenção comercial, foi criada apenas com 
+		intuito de testar e conhecer os recursos presentes na biblioteca processing.
+	</div>
+	<br>
+	
+	<!--Rodapé-->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark pt-0 pb-0">		
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item	">
+					<a class="nav-link text-light" href="https://diegomeruoca.github.io/Quem%20sou.html">Desenvolvido por Diego Meruoca</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link text-light" href="https://github.com/DiegoMeruoca/Shooter">Repositorio do jogo - Github</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link text-light" href="http://diegomeruoca.github.io/Contatos.html">Contatos</a>
+				</li>
+			</ul>		
+	</nav>
+	<!-- JavaScript (Opcional) -->
+	<!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	
+</body>
+</html>
